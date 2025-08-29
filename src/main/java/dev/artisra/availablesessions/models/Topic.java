@@ -1,10 +1,10 @@
 package dev.artisra.availablesessions.models;
 
-public class Topics {
+public class Topic {
     private String topicName;
     private String description;
 
-    public Topics(String topicName, String description) {
+    public Topic(String topicName, String description) {
         this.topicName = topicName;
         this.description = description;
     }

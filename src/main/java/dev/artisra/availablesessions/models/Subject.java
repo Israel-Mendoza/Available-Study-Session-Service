@@ -2,15 +2,15 @@ package dev.artisra.availablesessions.models;
 
 import java.util.List;
 
-public class Session {
+public class Subject {
     private int userId;
     private int sessionId;
     private String sessionName;
     private String description;
-    private List<Topics> topics;
+    private List<Topic> topics;
     private boolean isArchived;
 
-    public Session(int userId, int sessionId, String sessionName, String description) {
+    public Subject(int userId, int sessionId, String sessionName, String description) {
         this.userId = userId;
         this.sessionId = sessionId;
         this.sessionName = sessionName;
@@ -51,12 +51,12 @@ public class Session {
         this.description = description;
     }
 
-    public List<Topics> getTopics() {
+    public List<Topic> getTopics() {
         return topics;
     }
 
     public boolean addTopicToSession(String topicName, String description) {
-        Topics newTopic = new Topics(topicName, description);
+        Topic newTopic = new Topic(topicName, description);
         if (topics.contains(newTopic)) {
             return false; // Topic already exists
         }
