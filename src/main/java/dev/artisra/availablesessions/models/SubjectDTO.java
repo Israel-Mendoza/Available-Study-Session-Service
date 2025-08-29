@@ -2,20 +2,20 @@ package dev.artisra.availablesessions.models;
 
 import java.util.List;
 
-public class Subject {
+public class SubjectDTO {
     private int userId;
     private int sessionId;
     private String sessionName;
     private String description;
-    private List<Topic> topics;
+    private List<TopicDTO> topicDTOS;
     private boolean isArchived;
 
-    public Subject(int userId, int sessionId, String sessionName, String description) {
+    public SubjectDTO(int userId, int sessionId, String sessionName, String description) {
         this.userId = userId;
         this.sessionId = sessionId;
         this.sessionName = sessionName;
         this.description = description;
-        this.topics = List.of();
+        this.topicDTOS = List.of();
         this.isArchived = false; // Default value
     }
 
@@ -51,16 +51,16 @@ public class Subject {
         this.description = description;
     }
 
-    public List<Topic> getTopics() {
-        return topics;
+    public List<TopicDTO> getTopics() {
+        return topicDTOS;
     }
 
     public boolean addTopicToSession(String topicName, String description) {
-        Topic newTopic = new Topic(topicName, description);
-        if (topics.contains(newTopic)) {
+        TopicDTO newTopicDTO = new TopicDTO(topicName, description);
+        if (topicDTOS.contains(newTopicDTO)) {
             return false; // Topic already exists
         }
-        topics.add(newTopic);
+        topicDTOS.add(newTopicDTO);
         return true;
     }
 
