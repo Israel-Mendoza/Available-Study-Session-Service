@@ -5,6 +5,7 @@ import dev.artisra.availablesessions.entities.User;
 import dev.artisra.availablesessions.exceptions.custom.ExistingSubjectException;
 import dev.artisra.availablesessions.exceptions.custom.SubjectNotFoundException;
 import dev.artisra.availablesessions.exceptions.custom.UserNotFoundException;
+import dev.artisra.availablesessions.mappers.SubjectMapper;
 import dev.artisra.availablesessions.mappers.TopicMapper;
 import dev.artisra.availablesessions.models.SubjectDTO;
 import dev.artisra.availablesessions.models.TopicDTO;
@@ -27,14 +28,18 @@ public class SubjectServiceImpl implements SubjectService {
     private final UserRepository userRepository;
     private final SubjectRepository subjectRepository;
     private final TopicMapper topicMapper;
+    private final SubjectMapper subjectMapper;
 
     public SubjectServiceImpl(
             @Autowired UserRepository userRepository,
             @Autowired SubjectRepository subjectRepository,
-            @Autowired TopicMapper topicMapper){
+            @Autowired TopicMapper topicMapper,
+            @Autowired SubjectMapper subjectMapper
+    ) {
         this.userRepository = userRepository;
         this.subjectRepository = subjectRepository;
         this.topicMapper = topicMapper;
+        this.subjectMapper = subjectMapper;
     }
 
     @Override
@@ -67,7 +72,6 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public SubjectDTO getSubjectById(int subjectId, boolean includeTopics) {
-        logger.info("Fetching subject with ID {}", subjectId);
         Optional<Subject> subjectOpt = subjectRepository.findById(subjectId);
         if (subjectOpt.isEmpty()) {
             logger.warn("Subject with ID {} not found", subjectId);
@@ -76,7 +80,7 @@ public class SubjectServiceImpl implements SubjectService {
         Subject subject = subjectOpt.get();
         logger.info("Subject with ID {} found: '{}'", subjectId, subject.getName());
 
-        SubjectDTO subjectDTO = new SubjectDTO(subject.getUser().getId(), subject.getId(), subject.getName(), subject.getDescription(), subject.isArchived());
+        SubjectDTO subjectDTO = subjectMapper.subjectToSubjectDTO(subject);
 
         if (includeTopics) {
             logger.info("Including topics for subject ID {}", subjectId);
@@ -90,8 +94,6 @@ public class SubjectServiceImpl implements SubjectService {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User with ID " + userId + " does not exist.");
         }
-
-        logger.info("Fetching all subjects for user ID {}", userId);
 
         // Using the repository to fetch subjects directly
         var subjects = getSubjectDTOsForUser(userId);
@@ -110,8 +112,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public SubjectDTO  archiveSubject(int subjectId) {
-        logger.info("Archiving subject with ID {}", subjectId);
+    public SubjectDTO archiveSubject(int subjectId) {
         Optional<Subject> subjectOpt = subjectRepository.findById(subjectId);
         if (subjectOpt.isPresent()) {
             logger.info("Subject with ID {} found. Archiving...", subjectId);
@@ -119,7 +120,7 @@ public class SubjectServiceImpl implements SubjectService {
             subject.setArchived(true);
             subjectRepository.save(subject);
 
-            return new SubjectDTO(subject.getUser().getId(), subject.getId(), subject.getName(), subject.getDescription(), subject.isArchived());
+            return subjectMapper.subjectToSubjectDTO(subject);
         }
         logger.warn("Subject with ID {} not found. Cannot archive.", subjectId);
         throw new SubjectNotFoundException("Subject with ID " + subjectId + " not found.");
@@ -127,14 +128,13 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public SubjectDTO unarchiveSubject(int subjectId) {
-        logger.info("Unarchiving subject with ID {}", subjectId);
         Optional<Subject> subjectOpt = subjectRepository.findById(subjectId);
         if (subjectOpt.isPresent()) {
             logger.info("Subject with ID {} found. Unarchiving...", subjectId);
             Subject subject = subjectOpt.get();
             subject.setArchived(false);
             subjectRepository.save(subject);
-            return new SubjectDTO(subject.getUser().getId(), subject.getId(), subject.getName(), subject.getDescription(), subject.isArchived());
+            return subjectMapper.subjectToSubjectDTO(subject);
         }
         logger.warn("Subject with ID {} not found. Cannot unarchive.", subjectId);
         throw new SubjectNotFoundException("Subject with ID " + subjectId + " not found.");
@@ -150,15 +150,12 @@ public class SubjectServiceImpl implements SubjectService {
     private List<SubjectDTO> getSubjectDTOsForUser(int userId) {
         return subjectRepository.findByUserId(userId)
                 .stream()
-                .map(subject -> new SubjectDTO(subject.getUser().getId(), subject.getId(), subject.getName(), subject.getDescription(), subject.isArchived()))
+                .map(subjectMapper::subjectToSubjectDTO)
                 .toList();
     }
 
     private void populateTopicsForSubjectDTO(Subject subject, SubjectDTO subjectDTO) {
-        List<TopicDTO> topicDTOs = subject.getTopics()
-                .stream()
-                .map(topicMapper::topicToTopicDTO)
-                .toList();
+        List<TopicDTO> topicDTOs = getTopicDTOsForSubject(subject);
         subjectDTO.setTopicDTOs(topicDTOs);
     }
 
