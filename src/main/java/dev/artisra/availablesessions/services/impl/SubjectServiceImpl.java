@@ -5,9 +5,10 @@ import dev.artisra.availablesessions.entities.User;
 import dev.artisra.availablesessions.exceptions.custom.ExistingSubjectException;
 import dev.artisra.availablesessions.exceptions.custom.SubjectNotFoundException;
 import dev.artisra.availablesessions.exceptions.custom.UserNotFoundException;
+import dev.artisra.availablesessions.mappers.TopicMapper;
 import dev.artisra.availablesessions.models.SubjectDTO;
+import dev.artisra.availablesessions.models.TopicDTO;
 import dev.artisra.availablesessions.repositories.SubjectRepository;
-import dev.artisra.availablesessions.repositories.TopicRepository;
 import dev.artisra.availablesessions.repositories.UserRepository;
 import dev.artisra.availablesessions.services.interfaces.SubjectService;
 import org.slf4j.Logger;
@@ -25,10 +26,15 @@ public class SubjectServiceImpl implements SubjectService {
 
     private final UserRepository userRepository;
     private final SubjectRepository subjectRepository;
+    private final TopicMapper topicMapper;
 
-    public SubjectServiceImpl(@Autowired UserRepository userRepository, @Autowired SubjectRepository subjectRepository, @Autowired TopicRepository topicRepository) {
+    public SubjectServiceImpl(
+            @Autowired UserRepository userRepository,
+            @Autowired SubjectRepository subjectRepository,
+            @Autowired TopicMapper topicMapper){
         this.userRepository = userRepository;
         this.subjectRepository = subjectRepository;
+        this.topicMapper = topicMapper;
     }
 
     @Override
@@ -60,32 +66,51 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public SubjectDTO getSubjectById(int subjectId) {
+    public SubjectDTO getSubjectById(int subjectId, boolean includeTopics) {
         logger.info("Fetching subject with ID {}", subjectId);
         Optional<Subject> subjectOpt = subjectRepository.findById(subjectId);
-        if (subjectOpt.isPresent()) {
-            Subject subject = subjectOpt.get();
-            logger.info("Subject with ID {} found: '{}'", subjectId, subject.getName());
-            return new SubjectDTO(subject.getUser().getId(), subject.getId(), subject.getName(), subject.getDescription(), subject.isArchived());
+        if (subjectOpt.isEmpty()) {
+            logger.warn("Subject with ID {} not found", subjectId);
+            throw new SubjectNotFoundException("Subject with ID " + subjectId + " not found.");
         }
-        return null;
+        Subject subject = subjectOpt.get();
+        logger.info("Subject with ID {} found: '{}'", subjectId, subject.getName());
+
+        SubjectDTO subjectDTO = new SubjectDTO(subject.getUser().getId(), subject.getId(), subject.getName(), subject.getDescription(), subject.isArchived());
+
+        if (includeTopics) {
+            logger.info("Including topics for subject ID {}", subjectId);
+            populateTopicsForSubjectDTO(subject, subjectDTO);
+        }
+        return subjectDTO;
     }
 
     @Override
-    public List<SubjectDTO> getAllSubjectsForUser(int userId) {
+    public List<SubjectDTO> getAllSubjectsForUser(int userId, boolean includeTopics) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User with ID " + userId + " does not exist.");
         }
 
+        logger.info("Fetching all subjects for user ID {}", userId);
+
         // Using the repository to fetch subjects directly
-        return subjectRepository.findByUserId(userId)
-                .stream()
-                .map(subject -> new SubjectDTO(subject.getUser().getId(), subject.getId(), subject.getName(), subject.getDescription(), subject.isArchived()))
-                .toList();
+        var subjects = getSubjectDTOsForUser(userId);
+        logger.info("Retrieved {} subjects for user ID {}", subjects.size(), userId);
+
+        if (!includeTopics) {
+            return subjects;
+        }
+
+        for (var subjectDTO : subjects) {
+            Optional<Subject> subjectOpt = subjectRepository.findById(subjectDTO.getSubjectId());
+            subjectOpt.ifPresent(subject -> populateTopicsForSubjectDTO(subject, subjectDTO));
+        }
+
+        return subjects;
     }
 
     @Override
-    public SubjectDTO archiveSubject(int subjectId) {
+    public SubjectDTO  archiveSubject(int subjectId) {
         logger.info("Archiving subject with ID {}", subjectId);
         Optional<Subject> subjectOpt = subjectRepository.findById(subjectId);
         if (subjectOpt.isPresent()) {
@@ -113,6 +138,28 @@ public class SubjectServiceImpl implements SubjectService {
         }
         logger.warn("Subject with ID {} not found. Cannot unarchive.", subjectId);
         throw new SubjectNotFoundException("Subject with ID " + subjectId + " not found.");
+    }
+
+    private List<TopicDTO> getTopicDTOsForSubject(Subject subject) {
+        return subject.getTopics()
+                .stream()
+                .map(topicMapper::topicToTopicDTO)
+                .toList();
+    }
+
+    private List<SubjectDTO> getSubjectDTOsForUser(int userId) {
+        return subjectRepository.findByUserId(userId)
+                .stream()
+                .map(subject -> new SubjectDTO(subject.getUser().getId(), subject.getId(), subject.getName(), subject.getDescription(), subject.isArchived()))
+                .toList();
+    }
+
+    private void populateTopicsForSubjectDTO(Subject subject, SubjectDTO subjectDTO) {
+        List<TopicDTO> topicDTOs = subject.getTopics()
+                .stream()
+                .map(topicMapper::topicToTopicDTO)
+                .toList();
+        subjectDTO.setTopicDTOs(topicDTOs);
     }
 
     private Optional<Subject> getSubjectByName(int userId, String subjectName) {

@@ -1,21 +1,24 @@
 package dev.artisra.availablesessions.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.List;
 
 public class SubjectDTO {
     private int userId;
-    private int sessionId;
+    private int subjectId;
     private String sessionName;
     private String description;
-    private List<TopicDTO> topicDTOS;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<TopicDTO> topicDTOs;
     private boolean isArchived;
 
-    public SubjectDTO(int userId, int sessionId, String sessionName, String description, boolean isArchived) {
+    public SubjectDTO(int userId, int subjectId, String sessionName, String description, boolean isArchived) {
         this.userId = userId;
-        this.sessionId = sessionId;
+        this.subjectId = subjectId;
         this.sessionName = sessionName;
         this.description = description;
-        this.topicDTOS = List.of();
+        this.topicDTOs = null;
         this.isArchived = isArchived; // Default value
     }
 
@@ -27,12 +30,12 @@ public class SubjectDTO {
         this.userId = userId;
     }
 
-    public int getSessionId() {
-        return sessionId;
+    public int getSubjectId() {
+        return subjectId;
     }
 
-    public void setSessionId(int sessionId) {
-        this.sessionId = sessionId;
+    public void setSubjectId(int subjectId) {
+        this.subjectId = subjectId;
     }
 
     public String getSessionName() {
@@ -51,8 +54,12 @@ public class SubjectDTO {
         this.description = description;
     }
 
-    public List<TopicDTO> getTopics() {
-        return topicDTOS;
+    public List<TopicDTO> getTopicDTOs() {
+        return topicDTOs;
+    }
+
+    public void setTopicDTOs(List<TopicDTO> topicDTOs) {
+        this.topicDTOs = topicDTOs;
     }
 
     public boolean isArchived() {

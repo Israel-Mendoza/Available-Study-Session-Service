@@ -44,17 +44,20 @@ public class SubjectsController {
     }
 
     @GetMapping("/subjects/{subjectId}")
-    public ResponseEntity<SubjectDTO> getSubjectById(@PathVariable Integer subjectId) {
-        var subject = subjectService.getSubjectById(subjectId);
-        if (subject == null) {
-            throw new SubjectNotFoundException("Subject with ID " + subjectId + " not found.");
-        }
+    public ResponseEntity<SubjectDTO> getSubjectById(
+            @PathVariable Integer subjectId,
+            @RequestParam (value = "includeTopics", defaultValue = "false") boolean includeTopics
+    ) {
+        var subject = subjectService.getSubjectById(subjectId, includeTopics);
         return ResponseEntity.ok(subject);
     }
 
     @GetMapping("/users/{userId}/subjects")
-    public ResponseEntity<?> getAllSubjectsForUser(@PathVariable Integer userId) {
-        var subjects = subjectService.getAllSubjectsForUser(userId);
+    public ResponseEntity<?> getAllSubjectsForUser(
+            @PathVariable Integer userId,
+            @RequestParam(value = "includeTopics", defaultValue = "false") boolean includeTopics
+    ) {
+        var subjects = subjectService.getAllSubjectsForUser(userId, includeTopics);
         logger.info("Retrieved {} subjects for user ID {}", subjects.size(), userId);
         return ResponseEntity.ok(subjects);
     }
