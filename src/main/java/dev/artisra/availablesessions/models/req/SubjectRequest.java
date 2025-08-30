@@ -1,23 +1,23 @@
 package dev.artisra.availablesessions.models.req;
 
 public class SubjectRequest {
-    private String sessionName;
+    private String subject;
     private String description;
 
     public SubjectRequest() {
     }
 
-    public SubjectRequest(String sessionName, String description) {
-        this.sessionName = sessionName;
+    public SubjectRequest(String subject, String description) {
+        this.subject = subject;
         this.description = description;
     }
 
-    public String getSessionName() {
-        return sessionName;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setSessionName(String sessionName) {
-        this.sessionName = sessionName;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     public String getDescription() {

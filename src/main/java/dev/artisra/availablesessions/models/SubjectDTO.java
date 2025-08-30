@@ -10,13 +10,13 @@ public class SubjectDTO {
     private List<TopicDTO> topicDTOS;
     private boolean isArchived;
 
-    public SubjectDTO(int userId, int sessionId, String sessionName, String description) {
+    public SubjectDTO(int userId, int sessionId, String sessionName, String description, boolean isArchived) {
         this.userId = userId;
         this.sessionId = sessionId;
         this.sessionName = sessionName;
         this.description = description;
         this.topicDTOS = List.of();
-        this.isArchived = false; // Default value
+        this.isArchived = isArchived; // Default value
     }
 
     public int getUserId() {
