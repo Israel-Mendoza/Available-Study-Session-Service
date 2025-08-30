@@ -55,15 +55,6 @@ public class SubjectDTO {
         return topicDTOS;
     }
 
-    public boolean addTopicToSession(String topicName, String description) {
-        TopicDTO newTopicDTO = new TopicDTO(topicName, description);
-        if (topicDTOS.contains(newTopicDTO)) {
-            return false; // Topic already exists
-        }
-        topicDTOS.add(newTopicDTO);
-        return true;
-    }
-
     public boolean isArchived() {
         return isArchived;
     }

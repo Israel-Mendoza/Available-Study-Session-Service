@@ -1,6 +1,7 @@
 package dev.artisra.availablesessions.exceptions;
 
 import dev.artisra.availablesessions.exceptions.custom.ExistingSubjectException;
+import dev.artisra.availablesessions.exceptions.custom.ExistingTopicException;
 import dev.artisra.availablesessions.exceptions.custom.SubjectNotFoundException;
 import dev.artisra.availablesessions.exceptions.custom.UserNotFoundException;
 import dev.artisra.availablesessions.exceptions.dto.GeneralExceptionDTO;
@@ -19,15 +20,6 @@ public class ControllerExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
-    @ExceptionHandler(ExistingSubjectException.class)
-    public ResponseEntity<GeneralExceptionDTO> handleExistingSubjectException(ExistingSubjectException ex, WebRequest request) {
-        var exceptionDTO = buildExceptionDTO(ex, request, "Conflict", 409);
-
-        logger.warn("Conflict occurred: {}", ex.getMessage());
-
-        return new ResponseEntity<>(exceptionDTO, HttpStatus.CONFLICT);
-    }
-
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<GeneralExceptionDTO> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
         var exceptionDTO = buildExceptionDTO(ex, request, "Not Found", 404);
@@ -42,6 +34,24 @@ public class ControllerExceptionHandler {
         var exceptionDTO = buildExceptionDTO(ex, request, "Not Found", 404);
         logger.warn("Subject not found: {} - URI: {}", ex.getMessage(), request.getDescription(false).replace("uri=", ""));
         return new ResponseEntity<>(exceptionDTO, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ExistingSubjectException.class)
+    public ResponseEntity<GeneralExceptionDTO> handleExistingSubjectException(ExistingSubjectException ex, WebRequest request) {
+        var exceptionDTO = buildExceptionDTO(ex, request, "Conflict", 409);
+
+        logger.warn("Subject conflict occurred: {}", ex.getMessage());
+
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ExistingTopicException.class)
+    public ResponseEntity<GeneralExceptionDTO> handleExistingTopicException(ExistingTopicException ex, WebRequest request) {
+        var exceptionDTO = buildExceptionDTO(ex, request, "Conflict", 409);
+
+        logger.warn("Topic conflict occurred: {}", ex.getMessage());
+
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.CONFLICT);
     }
 
     private GeneralExceptionDTO buildExceptionDTO(Exception ex, WebRequest request, String status, int code) {

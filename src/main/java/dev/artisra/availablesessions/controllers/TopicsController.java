@@ -1,4 +1,33 @@
 package dev.artisra.availablesessions.controllers;
 
+import dev.artisra.availablesessions.models.TopicDTO;
+import dev.artisra.availablesessions.models.req.TopicRequest;
+import dev.artisra.availablesessions.services.interfaces.SubjectService;
+import dev.artisra.availablesessions.services.interfaces.TopicService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/available-sessions")
 public class TopicsController {
+
+    private final TopicService topicService;
+
+    public TopicsController(@Autowired TopicService topicService) {
+        this.topicService = topicService;
+    }
+
+    @PostMapping("/subjects/{subjectId}/topics")
+    public ResponseEntity<Integer> addTopicToSubject(@PathVariable Integer subjectId, @RequestBody TopicRequest topicRequest) {
+        int newTopicId = topicService.addTopicToSubject(subjectId, topicRequest.getTopic(), topicRequest.getDescription());
+        return new ResponseEntity<>(newTopicId, org.springframework.http.HttpStatus.CREATED);
+    }
+
+    @GetMapping("/subjects/{subjectId}/topics")
+    public ResponseEntity<List<TopicDTO>> getAllTopicsForSubject(@PathVariable Integer subjectId) {
+        return ResponseEntity.ok(topicService.getAllTopicsForSubject(subjectId));
+    }
 }
