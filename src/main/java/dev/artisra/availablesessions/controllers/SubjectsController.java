@@ -1,6 +1,5 @@
 package dev.artisra.availablesessions.controllers;
 
-import dev.artisra.availablesessions.exceptions.custom.SubjectNotFoundException;
 import dev.artisra.availablesessions.models.SubjectDTO;
 import dev.artisra.availablesessions.models.req.SubjectRequest;
 import dev.artisra.availablesessions.services.interfaces.SubjectService;
@@ -9,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/available-sessions")
@@ -53,11 +54,20 @@ public class SubjectsController {
     }
 
     @GetMapping("/users/{userId}/subjects")
-    public ResponseEntity<?> getAllSubjectsForUser(
+    public ResponseEntity<?> getSubjectsForUser(
             @PathVariable Integer userId,
-            @RequestParam(value = "includeTopics", defaultValue = "false") boolean includeTopics
+            @RequestParam(value = "includeTopics", defaultValue = "false") boolean includeTopics,
+            @RequestParam(value = "archived", defaultValue = "false") boolean archived
     ) {
-        var subjects = subjectService.getAllSubjectsForUser(userId, includeTopics);
+        List<SubjectDTO> subjects;
+
+        if (archived) {
+            logger.info("Fetching archived subjects for user ID {}", userId);
+            subjects = subjectService.getArchivedSubjectsByUserId(userId, includeTopics);
+        } else {
+            logger.info("Fetching non-archived subjects for user ID {}", userId);
+            subjects = subjectService.getNonArchivedSubjectsByUserId(userId, includeTopics);
+        }
         logger.info("Retrieved {} subjects for user ID {}", subjects.size(), userId);
         return ResponseEntity.ok(subjects);
     }

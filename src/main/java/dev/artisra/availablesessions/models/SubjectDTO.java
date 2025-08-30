@@ -7,16 +7,16 @@ import java.util.List;
 public class SubjectDTO {
     private int userId;
     private int subjectId;
-    private String sessionName;
+    private String name;
     private String description;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<TopicDTO> topicDTOs;
     private boolean isArchived;
 
-    public SubjectDTO(int userId, int subjectId, String sessionName, String description, boolean isArchived) {
-        this.userId = userId;
+    public SubjectDTO(int subjectId, int userId,  String sessionName, String description, boolean isArchived) {
         this.subjectId = subjectId;
-        this.sessionName = sessionName;
+        this.userId = userId;
+        this.name = sessionName;
         this.description = description;
         this.topicDTOs = null;
         this.isArchived = isArchived; // Default value
@@ -38,12 +38,12 @@ public class SubjectDTO {
         this.subjectId = subjectId;
     }
 
-    public String getSessionName() {
-        return sessionName;
+    public String getName() {
+        return name;
     }
 
-    public void setSessionName(String sessionName) {
-        this.sessionName = sessionName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

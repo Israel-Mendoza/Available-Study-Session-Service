@@ -90,25 +90,55 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<SubjectDTO> getAllSubjectsForUser(int userId, boolean includeTopics) {
+    public List<SubjectDTO> getNonArchivedSubjectsByUserId(int userId, boolean includeTopics) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User with ID " + userId + " does not exist.");
         }
 
-        // Using the repository to fetch subjects directly
-        var subjects = getSubjectDTOsForUser(userId);
-        logger.info("Retrieved {} subjects for user ID {}", subjects.size(), userId);
+        // Using the repository to fetch non-archived subjects directly
+        var subjects = subjectRepository.findByUserIdAndIsArchivedFalse(userId);
+        return getSubjectDTOS(includeTopics, subjects);
+    }
 
-        if (!includeTopics) {
-            return subjects;
+    @Override
+    public List<SubjectDTO> getArchivedSubjectsByUserId(int userId, boolean includeTopics) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException("User with ID " + userId + " does not exist.");
         }
 
-        for (var subjectDTO : subjects) {
+        // Using the repository to fetch archived subjects directly
+        var subjects = subjectRepository.findByUserIdAndIsArchivedTrue(userId);
+        return getSubjectDTOS(includeTopics, subjects);
+    }
+
+    @Override
+    public List<SubjectDTO> getAllSubjectsByUserId(int userId, boolean includeTopics) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException("User with ID " + userId + " does not exist.");
+        }
+
+        // Using the repository to fetch all subjects directly
+        var subjects = subjectRepository.findByUserId(userId);
+        logger.info("Retrieved {} total subjects for user ID {}", subjects.size(), userId);
+
+        return getSubjectDTOS(includeTopics, subjects);
+    }
+
+    private List<SubjectDTO> getSubjectDTOS(boolean includeTopics, List<Subject> subjects) {
+        var subjectDTOs = subjects.stream()
+                .map(subjectMapper::subjectToSubjectDTO)
+                .toList();
+
+        if (!includeTopics) {
+            return subjectDTOs;
+        }
+
+        for (var subjectDTO : subjectDTOs) {
             Optional<Subject> subjectOpt = subjectRepository.findById(subjectDTO.getSubjectId());
             subjectOpt.ifPresent(subject -> populateTopicsForSubjectDTO(subject, subjectDTO));
         }
 
-        return subjects;
+        return subjectDTOs;
     }
 
     @Override
@@ -147,8 +177,22 @@ public class SubjectServiceImpl implements SubjectService {
                 .toList();
     }
 
-    private List<SubjectDTO> getSubjectDTOsForUser(int userId) {
+    private List<SubjectDTO> getAllSubjectsByUserId(int userId) {
         return subjectRepository.findByUserId(userId)
+                .stream()
+                .map(subjectMapper::subjectToSubjectDTO)
+                .toList();
+    }
+
+    private List<SubjectDTO> getArchivedSubjectsByUserId(int userId) {
+        return subjectRepository.findByUserIdAndIsArchivedTrue(userId)
+                .stream()
+                .map(subjectMapper::subjectToSubjectDTO)
+                .toList();
+    }
+
+    private List<SubjectDTO> getNonArchivedSubjectsByUserId(int userId) {
+        return subjectRepository.findByUserIdAndIsArchivedFalse(userId)
                 .stream()
                 .map(subjectMapper::subjectToSubjectDTO)
                 .toList();
