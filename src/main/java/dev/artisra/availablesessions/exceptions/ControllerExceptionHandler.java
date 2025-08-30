@@ -1,9 +1,6 @@
 package dev.artisra.availablesessions.exceptions;
 
-import dev.artisra.availablesessions.exceptions.custom.ExistingSubjectException;
-import dev.artisra.availablesessions.exceptions.custom.ExistingTopicException;
-import dev.artisra.availablesessions.exceptions.custom.SubjectNotFoundException;
-import dev.artisra.availablesessions.exceptions.custom.UserNotFoundException;
+import dev.artisra.availablesessions.exceptions.custom.*;
 import dev.artisra.availablesessions.exceptions.dto.GeneralExceptionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +30,13 @@ public class ControllerExceptionHandler {
     public ResponseEntity<GeneralExceptionDTO> handleSubjectNotFoundException(SubjectNotFoundException ex, WebRequest request) {
         var exceptionDTO = buildExceptionDTO(ex, request, "Not Found", 404);
         logger.warn("Subject not found: {} - URI: {}", ex.getMessage(), request.getDescription(false).replace("uri=", ""));
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TopicNotFoundException.class)
+    public ResponseEntity<GeneralExceptionDTO> handleTopicNotFoundException(TopicNotFoundException ex, WebRequest request) {
+        var exceptionDTO = buildExceptionDTO(ex, request, "Not Found", 404);
+        logger.warn("Topic not found: {} - URI: {}", ex.getMessage(), request.getDescription(false).replace("uri=", ""));
         return new ResponseEntity<>(exceptionDTO, HttpStatus.NOT_FOUND);
     }
 

@@ -2,7 +2,6 @@ package dev.artisra.availablesessions.controllers;
 
 import dev.artisra.availablesessions.models.TopicDTO;
 import dev.artisra.availablesessions.models.req.TopicRequest;
-import dev.artisra.availablesessions.services.interfaces.SubjectService;
 import dev.artisra.availablesessions.services.interfaces.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,5 +28,10 @@ public class TopicsController {
     @GetMapping("/subjects/{subjectId}/topics")
     public ResponseEntity<List<TopicDTO>> getAllTopicsForSubject(@PathVariable Integer subjectId) {
         return ResponseEntity.ok(topicService.getAllTopicsForSubject(subjectId));
+    }
+
+    @GetMapping("/topics/{topicId}")
+    public ResponseEntity<TopicDTO> getTopicById(@PathVariable Integer topicId) {
+        return ResponseEntity.ok(topicService.getTopicById(topicId));
     }
 }
