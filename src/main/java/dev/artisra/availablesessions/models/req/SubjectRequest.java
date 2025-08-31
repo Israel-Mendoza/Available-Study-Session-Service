@@ -1,7 +1,14 @@
 package dev.artisra.availablesessions.models.req;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class SubjectRequest {
+    @NotNull(message = "Subject cannot be null")
+    @Size(min = 2, max = 100, message = "Subject must be between 2 and 100 characters")
     private String subject;
+    @NotNull(message = "Topic cannot be null")
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
 
     public SubjectRequest() {

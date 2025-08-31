@@ -3,6 +3,7 @@ package dev.artisra.availablesessions.controllers;
 import dev.artisra.availablesessions.models.SubjectDTO;
 import dev.artisra.availablesessions.models.req.SubjectRequest;
 import dev.artisra.availablesessions.services.interfaces.SubjectService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,10 @@ public class SubjectsController {
     }
 
     @PostMapping("/users/{userId}/subjects")
-    public ResponseEntity<Integer> createNewSubject(@PathVariable Integer userId, @RequestBody SubjectRequest subjectRequest) {
+    public ResponseEntity<Integer> createNewSubject(
+            @PathVariable Integer userId,
+            @Valid @RequestBody SubjectRequest subjectRequest
+    ) {
         logger.info("Creating new subject '{}' for user ID {}", subjectRequest.getSubject(), userId);
         var createdSubjectId = subjectService.createSubject(userId, subjectRequest.getSubject(), subjectRequest.getDescription());
         return ResponseEntity
