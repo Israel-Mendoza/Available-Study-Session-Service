@@ -1,6 +1,7 @@
 package dev.artisra.availablesessions.services.interfaces;
 
 import dev.artisra.availablesessions.models.SubjectDTO;
+import dev.artisra.availablesessions.models.req.SubjectRequest;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ public interface SubjectService {
     List<SubjectDTO> getNonArchivedSubjectsByUserId(int userId, boolean includeTopics);
     List<SubjectDTO> getArchivedSubjectsByUserId(int userId, boolean includeTopics);
     List<SubjectDTO> getAllSubjectsByUserId(int userId, boolean includeTopics);
+    void updateSubject(int subjectId, SubjectRequest subjectRequest);
     SubjectDTO archiveSubject(int subjectId);
     SubjectDTO unarchiveSubject(int subjectId);
 }

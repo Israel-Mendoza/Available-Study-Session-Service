@@ -71,4 +71,14 @@ public class SubjectsController {
         logger.info("Retrieved {} subjects for user ID {}", subjects.size(), userId);
         return ResponseEntity.ok(subjects);
     }
+
+    @PatchMapping("/subjects/{subjectId}")
+    public ResponseEntity<SubjectDTO> updateSubject(
+            @PathVariable Integer subjectId,
+            @RequestBody SubjectRequest subjectRequest
+    ) {
+        logger.info("Updating subject with ID {}", subjectId);
+        subjectService.updateSubject(subjectId, subjectRequest);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -9,6 +9,7 @@ import dev.artisra.availablesessions.mappers.SubjectMapper;
 import dev.artisra.availablesessions.mappers.TopicMapper;
 import dev.artisra.availablesessions.models.SubjectDTO;
 import dev.artisra.availablesessions.models.TopicDTO;
+import dev.artisra.availablesessions.models.req.SubjectRequest;
 import dev.artisra.availablesessions.repositories.SubjectRepository;
 import dev.artisra.availablesessions.repositories.UserRepository;
 import dev.artisra.availablesessions.services.interfaces.SubjectService;
@@ -122,6 +123,25 @@ public class SubjectServiceImpl implements SubjectService {
         logger.info("Retrieved {} total subjects for user ID {}", subjects.size(), userId);
 
         return getSubjectDTOS(includeTopics, subjects);
+    }
+
+    @Override
+    public void updateSubject(int subjectId, SubjectRequest subjectRequest) {
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new SubjectNotFoundException("Subject with ID " + subjectId + " not found."));
+
+        String newName = subjectRequest.getSubject();
+        String newDescription = subjectRequest.getDescription();
+
+        if (newName != null && !newName.isBlank()) {
+            subject.setName(newName);
+        }
+        if (newDescription != null && !newDescription.isBlank()) {
+            subject.setDescription(newDescription);
+        }
+
+        subjectRepository.save(subject);
+        logger.info("Subject with ID {} updated successfully", subjectId);
     }
 
     private List<SubjectDTO> getSubjectDTOS(boolean includeTopics, List<Subject> subjects) {
