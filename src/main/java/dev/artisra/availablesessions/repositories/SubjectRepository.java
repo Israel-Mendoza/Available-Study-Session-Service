@@ -25,12 +25,12 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     // Finds all subjects associated with a specific user ID that are archived.
     List<Subject> findByUserIdAndIsArchivedTrue(Integer userId);
 
-    // Deletes a subject by its ID.
+    // Checks if a subject with the given ID exists.
     boolean existsById(int id);
 
     // Checks if a subject with the given name exists.
-    boolean existsSubjectByName(String name);
+    boolean existsSubjectByUserIdAndName(Integer userId, String name);
 
-    // Deletes a subject by its ID.
-    boolean deleteById(int id);
+    // Deletes a subject by its ID and returns true if the subject was deleted.
+    Subject deleteById(int id);
 }
