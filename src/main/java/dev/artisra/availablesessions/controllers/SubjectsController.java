@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -27,7 +28,9 @@ public class SubjectsController {
     public ResponseEntity<Integer> createNewSubject(@PathVariable Integer userId, @RequestBody SubjectRequest subjectRequest) {
         logger.info("Creating new subject '{}' for user ID {}", subjectRequest.getSubject(), userId);
         var createdSubjectId = subjectService.createSubject(userId, subjectRequest.getSubject(), subjectRequest.getDescription());
-        return new ResponseEntity<>(createdSubjectId, org.springframework.http.HttpStatus.CREATED);
+        return ResponseEntity
+                .created(URI.create("/api/v1/available-sessions/subjects/" + createdSubjectId))
+                .body(createdSubjectId);
     }
 
     @PostMapping("/subjects/{subjectId}/archive")
