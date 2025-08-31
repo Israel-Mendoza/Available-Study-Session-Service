@@ -72,7 +72,7 @@ public class TopicServiceImpl implements TopicService {
             logger.warn("Topic with ID {} not found.", topicId);
             throw new TopicNotFoundException("Topic with ID " + topicId + " not found.");
         }
-        logger.info("Retrieved topic '{}' with ID {}", topicResponse.getTopicName(), topicId);
+        logger.info("Retrieved topic '{}' with ID {}", topicResponse.getName(), topicId);
         return topicResponse;
     }
 

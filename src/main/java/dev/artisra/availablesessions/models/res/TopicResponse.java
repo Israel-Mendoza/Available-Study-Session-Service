@@ -3,22 +3,22 @@ package dev.artisra.availablesessions.models.res;
 public class TopicResponse {
     private int topicId;
     private int subjectId;
-    private String topicName;
+    private String name;
     private String description;
 
     public TopicResponse(int topicId, int subjectId, String topicName, String description) {
         this.topicId = topicId;
         this.subjectId = subjectId;
-        this.topicName = topicName;
+        this.name = topicName;
         this.description = description;
     }
 
-    public String getTopicName() {
-        return topicName;
+    public String getName() {
+        return name;
     }
 
-    public void setTopicName(String topicName) {
-        this.topicName = topicName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

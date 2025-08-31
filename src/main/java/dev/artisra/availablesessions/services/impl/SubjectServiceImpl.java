@@ -220,7 +220,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     private void populateTopicsForSubjectDTO(Subject subject, SubjectResponse subjectResponse) {
         List<TopicResponse> topicResponses = getTopicDTOsForSubject(subject);
-        subjectResponse.setTopicDTOs(topicResponses);
+        subjectResponse.setTopics(topicResponses);
     }
 
     private Optional<Subject> getSubjectByName(int userId, String subjectName) {

@@ -10,7 +10,7 @@ public class SubjectResponse {
     private String name;
     private String description;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<TopicResponse> topicResponses;
+    private List<TopicResponse> topics;
     private boolean isArchived;
 
     public SubjectResponse(int subjectId, int userId, String sessionName, String description, boolean isArchived) {
@@ -18,7 +18,7 @@ public class SubjectResponse {
         this.userId = userId;
         this.name = sessionName;
         this.description = description;
-        this.topicResponses = null;
+        this.topics = null;
         this.isArchived = isArchived; // Default value
     }
 
@@ -54,12 +54,12 @@ public class SubjectResponse {
         this.description = description;
     }
 
-    public List<TopicResponse> getTopicDTOs() {
-        return topicResponses;
+    public List<TopicResponse> getTopics() {
+        return topics;
     }
 
-    public void setTopicDTOs(List<TopicResponse> topicResponses) {
-        this.topicResponses = topicResponses;
+    public void setTopics(List<TopicResponse> topicResponses) {
+        this.topics = topicResponses;
     }
 
     public boolean isArchived() {
