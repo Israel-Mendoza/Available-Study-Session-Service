@@ -1,6 +1,6 @@
 package dev.artisra.availablesessions.controllers;
 
-import dev.artisra.availablesessions.models.TopicDTO;
+import dev.artisra.availablesessions.models.res.TopicResponse;
 import dev.artisra.availablesessions.models.req.TopicRequest;
 import dev.artisra.availablesessions.services.interfaces.TopicService;
 import jakarta.validation.Valid;
@@ -32,17 +32,17 @@ public class TopicsController {
     }
 
     @GetMapping("/subjects/{subjectId}/topics")
-    public ResponseEntity<List<TopicDTO>> getAllTopicsForSubject(@PathVariable Integer subjectId) {
+    public ResponseEntity<List<TopicResponse>> getAllTopicsForSubject(@PathVariable Integer subjectId) {
         return ResponseEntity.ok(topicService.getAllTopicsForSubject(subjectId));
     }
 
     @GetMapping("/topics/{topicId}")
-    public ResponseEntity<TopicDTO> getTopicById(@PathVariable Integer topicId) {
+    public ResponseEntity<TopicResponse> getTopicById(@PathVariable Integer topicId) {
         return ResponseEntity.ok(topicService.getTopicById(topicId));
     }
 
     @PatchMapping("/topics/{topicId}")
-    public ResponseEntity<TopicDTO> updateTopic(
+    public ResponseEntity<TopicResponse> updateTopic(
             @PathVariable Integer topicId,
             @RequestBody TopicRequest topicRequest
     ) {

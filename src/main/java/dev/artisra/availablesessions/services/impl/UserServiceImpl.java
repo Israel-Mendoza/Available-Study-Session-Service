@@ -5,11 +5,11 @@ import dev.artisra.availablesessions.repositories.UserRepository;
 import dev.artisra.availablesessions.services.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class DbUserService implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public DbUserService(@Autowired UserRepository userRepository) {
+    public UserServiceImpl(@Autowired UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

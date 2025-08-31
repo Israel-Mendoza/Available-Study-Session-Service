@@ -1,13 +1,13 @@
 package dev.artisra.availablesessions.mappers;
 
 import dev.artisra.availablesessions.entities.Topic;
-import dev.artisra.availablesessions.models.TopicDTO;
+import dev.artisra.availablesessions.models.res.TopicResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TopicMapper {
-    public TopicDTO topicToTopicDTO(Topic topic) {
-        return new TopicDTO(
+    public TopicResponse topicToTopicDTO(Topic topic) {
+        return new TopicResponse(
                 topic.getId(),
                 topic.getSubject().getId(),
                 topic.getName(),

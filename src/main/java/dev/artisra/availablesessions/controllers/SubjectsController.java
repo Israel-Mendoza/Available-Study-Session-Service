@@ -1,6 +1,6 @@
 package dev.artisra.availablesessions.controllers;
 
-import dev.artisra.availablesessions.models.SubjectDTO;
+import dev.artisra.availablesessions.models.res.SubjectResponse;
 import dev.artisra.availablesessions.models.req.SubjectRequest;
 import dev.artisra.availablesessions.services.interfaces.SubjectService;
 import jakarta.validation.Valid;
@@ -38,21 +38,21 @@ public class SubjectsController {
     }
 
     @PostMapping("/subjects/{subjectId}/archive")
-    public ResponseEntity<SubjectDTO> archiveSubject(@PathVariable Integer subjectId) {
+    public ResponseEntity<SubjectResponse> archiveSubject(@PathVariable Integer subjectId) {
         logger.info("Archiving subject with ID {}", subjectId);
-        SubjectDTO subjectDTO = subjectService.archiveSubject(subjectId);
-        return ResponseEntity.ok(subjectDTO);
+        SubjectResponse subjectResponse = subjectService.archiveSubject(subjectId);
+        return ResponseEntity.ok(subjectResponse);
     }
 
     @PostMapping("/subjects/{subjectId}/unarchive")
-    public ResponseEntity<SubjectDTO> unarchiveSubject(@PathVariable Integer subjectId) {
+    public ResponseEntity<SubjectResponse> unarchiveSubject(@PathVariable Integer subjectId) {
         logger.info("Unarchiving subject with ID {}", subjectId);
-        SubjectDTO subjectDTO = subjectService.unarchiveSubject(subjectId);
-        return ResponseEntity.ok(subjectDTO);
+        SubjectResponse subjectResponse = subjectService.unarchiveSubject(subjectId);
+        return ResponseEntity.ok(subjectResponse);
     }
 
     @GetMapping("/subjects/{subjectId}")
-    public ResponseEntity<SubjectDTO> getSubjectById(
+    public ResponseEntity<SubjectResponse> getSubjectById(
             @PathVariable Integer subjectId,
             @RequestParam (value = "includeTopics", defaultValue = "false") boolean includeTopics
     ) {
@@ -66,7 +66,7 @@ public class SubjectsController {
             @RequestParam(value = "includeTopics", defaultValue = "false") boolean includeTopics,
             @RequestParam(value = "archived", defaultValue = "false") boolean archived
     ) {
-        List<SubjectDTO> subjects;
+        List<SubjectResponse> subjects;
 
         if (archived) {
             logger.info("Fetching archived subjects for user ID {}", userId);
@@ -80,7 +80,7 @@ public class SubjectsController {
     }
 
     @PatchMapping("/subjects/{subjectId}")
-    public ResponseEntity<SubjectDTO> updateSubject(
+    public ResponseEntity<SubjectResponse> updateSubject(
             @PathVariable Integer subjectId,
             @RequestBody SubjectRequest subjectRequest
     ) {

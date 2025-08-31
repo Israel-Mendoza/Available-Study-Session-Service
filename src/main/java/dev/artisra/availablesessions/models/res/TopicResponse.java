@@ -1,12 +1,12 @@
-package dev.artisra.availablesessions.models;
+package dev.artisra.availablesessions.models.res;
 
-public class TopicDTO {
+public class TopicResponse {
     private int topicId;
     private int subjectId;
     private String topicName;
     private String description;
 
-    public TopicDTO(int topicId, int subjectId, String topicName, String description) {
+    public TopicResponse(int topicId, int subjectId, String topicName, String description) {
         this.topicId = topicId;
         this.subjectId = subjectId;
         this.topicName = topicName;

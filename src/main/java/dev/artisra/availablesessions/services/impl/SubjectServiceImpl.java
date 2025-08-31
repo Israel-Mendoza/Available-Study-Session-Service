@@ -7,8 +7,8 @@ import dev.artisra.availablesessions.exceptions.custom.SubjectNotFoundException;
 import dev.artisra.availablesessions.exceptions.custom.UserNotFoundException;
 import dev.artisra.availablesessions.mappers.SubjectMapper;
 import dev.artisra.availablesessions.mappers.TopicMapper;
-import dev.artisra.availablesessions.models.SubjectDTO;
-import dev.artisra.availablesessions.models.TopicDTO;
+import dev.artisra.availablesessions.models.res.SubjectResponse;
+import dev.artisra.availablesessions.models.res.TopicResponse;
 import dev.artisra.availablesessions.models.req.SubjectRequest;
 import dev.artisra.availablesessions.repositories.SubjectRepository;
 import dev.artisra.availablesessions.repositories.UserRepository;
@@ -72,7 +72,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public SubjectDTO getSubjectById(int subjectId, boolean includeTopics) {
+    public SubjectResponse getSubjectById(int subjectId, boolean includeTopics) {
         Optional<Subject> subjectOpt = subjectRepository.findById(subjectId);
         if (subjectOpt.isEmpty()) {
             logger.warn("Subject with ID {} not found", subjectId);
@@ -81,17 +81,17 @@ public class SubjectServiceImpl implements SubjectService {
         Subject subject = subjectOpt.get();
         logger.info("Subject with ID {} found: '{}'", subjectId, subject.getName());
 
-        SubjectDTO subjectDTO = subjectMapper.subjectToSubjectDTO(subject);
+        SubjectResponse subjectResponse = subjectMapper.subjectToSubjectDTO(subject);
 
         if (includeTopics) {
             logger.info("Including topics for subject ID {}", subjectId);
-            populateTopicsForSubjectDTO(subject, subjectDTO);
+            populateTopicsForSubjectDTO(subject, subjectResponse);
         }
-        return subjectDTO;
+        return subjectResponse;
     }
 
     @Override
-    public List<SubjectDTO> getNonArchivedSubjectsByUserId(int userId, boolean includeTopics) {
+    public List<SubjectResponse> getNonArchivedSubjectsByUserId(int userId, boolean includeTopics) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User with ID " + userId + " does not exist.");
         }
@@ -102,7 +102,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<SubjectDTO> getArchivedSubjectsByUserId(int userId, boolean includeTopics) {
+    public List<SubjectResponse> getArchivedSubjectsByUserId(int userId, boolean includeTopics) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User with ID " + userId + " does not exist.");
         }
@@ -113,7 +113,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<SubjectDTO> getAllSubjectsByUserId(int userId, boolean includeTopics) {
+    public List<SubjectResponse> getAllSubjectsByUserId(int userId, boolean includeTopics) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User with ID " + userId + " does not exist.");
         }
@@ -144,7 +144,7 @@ public class SubjectServiceImpl implements SubjectService {
         logger.info("Subject with ID {} updated successfully", subjectId);
     }
 
-    private List<SubjectDTO> getSubjectDTOS(boolean includeTopics, List<Subject> subjects) {
+    private List<SubjectResponse> getSubjectDTOS(boolean includeTopics, List<Subject> subjects) {
         var subjectDTOs = subjects.stream()
                 .map(subjectMapper::subjectToSubjectDTO)
                 .toList();
@@ -162,7 +162,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public SubjectDTO archiveSubject(int subjectId) {
+    public SubjectResponse archiveSubject(int subjectId) {
         Optional<Subject> subjectOpt = subjectRepository.findById(subjectId);
         if (subjectOpt.isPresent()) {
             logger.info("Subject with ID {} found. Archiving...", subjectId);
@@ -177,7 +177,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public SubjectDTO unarchiveSubject(int subjectId) {
+    public SubjectResponse unarchiveSubject(int subjectId) {
         Optional<Subject> subjectOpt = subjectRepository.findById(subjectId);
         if (subjectOpt.isPresent()) {
             logger.info("Subject with ID {} found. Unarchiving...", subjectId);
@@ -190,37 +190,37 @@ public class SubjectServiceImpl implements SubjectService {
         throw new SubjectNotFoundException("Subject with ID " + subjectId + " not found.");
     }
 
-    private List<TopicDTO> getTopicDTOsForSubject(Subject subject) {
+    private List<TopicResponse> getTopicDTOsForSubject(Subject subject) {
         return subject.getTopics()
                 .stream()
                 .map(topicMapper::topicToTopicDTO)
                 .toList();
     }
 
-    private List<SubjectDTO> getAllSubjectsByUserId(int userId) {
+    private List<SubjectResponse> getAllSubjectsByUserId(int userId) {
         return subjectRepository.findByUserId(userId)
                 .stream()
                 .map(subjectMapper::subjectToSubjectDTO)
                 .toList();
     }
 
-    private List<SubjectDTO> getArchivedSubjectsByUserId(int userId) {
+    private List<SubjectResponse> getArchivedSubjectsByUserId(int userId) {
         return subjectRepository.findByUserIdAndIsArchivedTrue(userId)
                 .stream()
                 .map(subjectMapper::subjectToSubjectDTO)
                 .toList();
     }
 
-    private List<SubjectDTO> getNonArchivedSubjectsByUserId(int userId) {
+    private List<SubjectResponse> getNonArchivedSubjectsByUserId(int userId) {
         return subjectRepository.findByUserIdAndIsArchivedFalse(userId)
                 .stream()
                 .map(subjectMapper::subjectToSubjectDTO)
                 .toList();
     }
 
-    private void populateTopicsForSubjectDTO(Subject subject, SubjectDTO subjectDTO) {
-        List<TopicDTO> topicDTOs = getTopicDTOsForSubject(subject);
-        subjectDTO.setTopicDTOs(topicDTOs);
+    private void populateTopicsForSubjectDTO(Subject subject, SubjectResponse subjectResponse) {
+        List<TopicResponse> topicResponses = getTopicDTOsForSubject(subject);
+        subjectResponse.setTopicDTOs(topicResponses);
     }
 
     private Optional<Subject> getSubjectByName(int userId, String subjectName) {

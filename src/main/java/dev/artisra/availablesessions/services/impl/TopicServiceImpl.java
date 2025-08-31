@@ -6,7 +6,7 @@ import dev.artisra.availablesessions.exceptions.custom.ExistingTopicException;
 import dev.artisra.availablesessions.exceptions.custom.SubjectNotFoundException;
 import dev.artisra.availablesessions.exceptions.custom.TopicNotFoundException;
 import dev.artisra.availablesessions.mappers.TopicMapper;
-import dev.artisra.availablesessions.models.TopicDTO;
+import dev.artisra.availablesessions.models.res.TopicResponse;
 import dev.artisra.availablesessions.models.req.TopicRequest;
 import dev.artisra.availablesessions.repositories.SubjectRepository;
 import dev.artisra.availablesessions.repositories.TopicRepository;
@@ -66,18 +66,18 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public TopicDTO getTopicById(int topicId) {
-        TopicDTO topicDTO = topicRepository.findById(topicId).map(topic -> new TopicDTO(topic.getId(), topic.getSubject().getId(), topic.getName(), topic.getDescription())).orElse(null);
-        if (topicDTO == null) {
+    public TopicResponse getTopicById(int topicId) {
+        TopicResponse topicResponse = topicRepository.findById(topicId).map(topic -> new TopicResponse(topic.getId(), topic.getSubject().getId(), topic.getName(), topic.getDescription())).orElse(null);
+        if (topicResponse == null) {
             logger.warn("Topic with ID {} not found.", topicId);
             throw new TopicNotFoundException("Topic with ID " + topicId + " not found.");
         }
-        logger.info("Retrieved topic '{}' with ID {}", topicDTO.getTopicName(), topicId);
-        return topicDTO;
+        logger.info("Retrieved topic '{}' with ID {}", topicResponse.getTopicName(), topicId);
+        return topicResponse;
     }
 
     @Override
-    public List<TopicDTO> getAllTopicsForSubject(int subjectId) {
+    public List<TopicResponse> getAllTopicsForSubject(int subjectId) {
         // Checking if the subject exists
         if (subjectRepository.findById(subjectId).isEmpty()) {
             logger.warn("Subject with ID {} not found.", subjectId);
@@ -86,7 +86,7 @@ public class TopicServiceImpl implements TopicService {
 
         return topicRepository.findBySubjectId(subjectId).stream()
                 .map(topic ->
-                        new TopicDTO(topic.getId(), topic.getSubject().getId(), topic.getName(), topic.getDescription())
+                        new TopicResponse(topic.getId(), topic.getSubject().getId(), topic.getName(), topic.getDescription())
                 ).toList();
     }
 

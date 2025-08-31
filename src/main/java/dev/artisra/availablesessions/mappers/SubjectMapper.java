@@ -1,13 +1,13 @@
 package dev.artisra.availablesessions.mappers;
 
 import dev.artisra.availablesessions.entities.Subject;
-import dev.artisra.availablesessions.models.SubjectDTO;
+import dev.artisra.availablesessions.models.res.SubjectResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SubjectMapper {
-    public SubjectDTO subjectToSubjectDTO(Subject subject) {
-        return new SubjectDTO(
+    public SubjectResponse subjectToSubjectDTO(Subject subject) {
+        return new SubjectResponse(
                 subject.getId(),
                 subject.getUser().getId(),
                 subject.getName(),
