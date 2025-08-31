@@ -5,7 +5,9 @@ import dev.artisra.availablesessions.entities.Topic;
 import dev.artisra.availablesessions.exceptions.custom.ExistingTopicException;
 import dev.artisra.availablesessions.exceptions.custom.SubjectNotFoundException;
 import dev.artisra.availablesessions.exceptions.custom.TopicNotFoundException;
+import dev.artisra.availablesessions.mappers.TopicMapper;
 import dev.artisra.availablesessions.models.TopicDTO;
+import dev.artisra.availablesessions.models.req.TopicRequest;
 import dev.artisra.availablesessions.repositories.SubjectRepository;
 import dev.artisra.availablesessions.repositories.TopicRepository;
 import dev.artisra.availablesessions.services.interfaces.TopicService;
@@ -24,10 +26,12 @@ public class TopicServiceImpl implements TopicService {
 
     private final TopicRepository topicRepository;
     private final SubjectRepository subjectRepository;
+    private final TopicMapper topicMapper;
 
-    public TopicServiceImpl(@Autowired TopicRepository topicRepository, @Autowired SubjectRepository subjectRepository) {
+    public TopicServiceImpl(@Autowired TopicRepository topicRepository, @Autowired SubjectRepository subjectRepository, TopicMapper topicMapper) {
         this.topicRepository = topicRepository;
         this.subjectRepository = subjectRepository;
+        this.topicMapper = topicMapper;
     }
 
 
@@ -84,6 +88,31 @@ public class TopicServiceImpl implements TopicService {
                 .map(topic ->
                         new TopicDTO(topic.getId(), topic.getSubject().getId(), topic.getName(), topic.getDescription())
                 ).toList();
+    }
+
+    @Override
+    public void updateTopic(int topicId, TopicRequest topicRequest) {
+        Optional<Topic> topicOpt = topicRepository.findById(topicId);
+        if (topicOpt.isEmpty()) {
+            logger.warn("Topic with ID {} not found.", topicId);
+            throw new TopicNotFoundException("Topic with ID " + topicId + " not found.");
+        }
+
+        Topic topic = topicOpt.get();
+
+        String topicName = topicRequest.getTopic();
+        String description = topicRequest.getDescription();
+
+        if (topicName != null && !topicName.isBlank()) {
+            topic.setName(topicName);
+        }
+        if (description != null && !description.isBlank()) {
+            topic.setDescription(description);
+        }
+
+        Topic updatedTopic = topicRepository.save(topic);
+        logger.info("Updated topic '{}' with ID {}", updatedTopic.getName(), topicId);
+        topicMapper.topicToTopicDTO(updatedTopic);
     }
 
     @Override

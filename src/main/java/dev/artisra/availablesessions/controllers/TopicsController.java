@@ -1,5 +1,6 @@
 package dev.artisra.availablesessions.controllers;
 
+import dev.artisra.availablesessions.exceptions.custom.TopicNotFoundException;
 import dev.artisra.availablesessions.models.TopicDTO;
 import dev.artisra.availablesessions.models.req.TopicRequest;
 import dev.artisra.availablesessions.services.interfaces.TopicService;
@@ -33,5 +34,14 @@ public class TopicsController {
     @GetMapping("/topics/{topicId}")
     public ResponseEntity<TopicDTO> getTopicById(@PathVariable Integer topicId) {
         return ResponseEntity.ok(topicService.getTopicById(topicId));
+    }
+
+    @PatchMapping("/topics/{topicId}")
+    public ResponseEntity<TopicDTO> updateTopic(
+            @PathVariable Integer topicId,
+            @RequestBody TopicRequest topicRequest
+    ) {
+        topicService.updateTopic(topicId, topicRequest);
+        return ResponseEntity.noContent().build();
     }
 }
