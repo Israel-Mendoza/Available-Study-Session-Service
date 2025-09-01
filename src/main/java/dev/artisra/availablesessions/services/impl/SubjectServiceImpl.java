@@ -144,23 +144,6 @@ public class SubjectServiceImpl implements SubjectService {
         logger.info("Subject with ID {} updated successfully", subjectId);
     }
 
-    private List<SubjectResponse> getSubjectDTOS(boolean includeTopics, List<Subject> subjects) {
-        var subjectDTOs = subjects.stream()
-                .map(subjectMapper::subjectToSubjectDTO)
-                .toList();
-
-        if (!includeTopics) {
-            return subjectDTOs;
-        }
-
-        for (var subjectDTO : subjectDTOs) {
-            Optional<Subject> subjectOpt = subjectRepository.findById(subjectDTO.getSubjectId());
-            subjectOpt.ifPresent(subject -> populateTopicsForSubjectDTO(subject, subjectDTO));
-        }
-
-        return subjectDTOs;
-    }
-
     @Override
     public SubjectResponse archiveSubject(int subjectId) {
         Optional<Subject> subjectOpt = subjectRepository.findById(subjectId);
@@ -188,6 +171,23 @@ public class SubjectServiceImpl implements SubjectService {
         }
         logger.warn("Subject with ID {} not found. Cannot unarchive.", subjectId);
         throw new SubjectNotFoundException("Subject with ID " + subjectId + " not found.");
+    }
+
+    private List<SubjectResponse> getSubjectDTOS(boolean includeTopics, List<Subject> subjects) {
+        var subjectDTOs = subjects.stream()
+                .map(subjectMapper::subjectToSubjectDTO)
+                .toList();
+
+        if (!includeTopics) {
+            return subjectDTOs;
+        }
+
+        for (var subjectDTO : subjectDTOs) {
+            Optional<Subject> subjectOpt = subjectRepository.findById(subjectDTO.getSubjectId());
+            subjectOpt.ifPresent(subject -> populateTopicsForSubjectDTO(subject, subjectDTO));
+        }
+
+        return subjectDTOs;
     }
 
     private List<TopicResponse> getTopicDTOsForSubject(Subject subject) {
