@@ -11,5 +11,5 @@ public interface TopicService {
     List<TopicResponse> getAllTopicsForSubject(int subjectId);
     void updateTopic(int topicId, TopicRequest topicRequest);
     boolean topicExists(int topicId);
-    boolean deleteTopic(int topicId);
+    void deleteTopic(int topicId);
 }

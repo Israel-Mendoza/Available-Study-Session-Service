@@ -32,5 +32,5 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     boolean existsSubjectByUserIdAndName(Integer userId, String name);
 
     // Deletes a subject by its ID and returns true if the subject was deleted.
-    Subject deleteById(int id);
+    void deleteById(int id);
 }

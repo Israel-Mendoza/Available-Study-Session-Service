@@ -121,7 +121,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public boolean deleteTopic(int topicId) {
-        return topicRepository.deleteById(topicId);
+    public void deleteTopic(int topicId) {
+        topicRepository.deleteById(topicId);
     }
 }

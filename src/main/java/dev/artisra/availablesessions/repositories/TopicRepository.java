@@ -17,8 +17,8 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
     List<Topic> findBySubjectId(Integer subjectId);
 
     // Deletes a topic by its ID.
-    boolean deleteById(int id);
+    void deleteById(int id);
 
     // Deletes all topics associated with a specific subject ID.
-    boolean deleteBySubjectId(int subjectId);
+    void deleteBySubjectId(int subjectId);
 }

@@ -1,8 +1,6 @@
 package dev.artisra.availablesessions.unit.repositories;
 
-import dev.artisra.availablesessions.entities.Subject;
 import dev.artisra.availablesessions.repositories.SubjectRepository;
-import dev.artisra.availablesessions.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
