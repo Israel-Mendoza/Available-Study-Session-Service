@@ -27,7 +27,22 @@ This service is responsible for managing subjects and their associated topics. I
 4. Access the API endpoints using a tool like Postman or curl.
 5. To stop the application, simply terminate the process.
 
+## Testing
+To run the tests, use the following command:
+```sh
+./gradlew test
+```
+
+Currently, integration tests are configured to use testcontainers with a MySQL container.
+Make sure Docker is running on your machine before executing the tests.
+
 ## Requirements
 - Java 21 or higher
 - Gradle
+- For `prod` profile:
+  - Currently, the application is configured to connect to a MySQL database running on `localhost:3306`.
+- For `dev` profile:
+  - No additional requirements, as it uses an embedded H2 database.
+- Docker (for running integration tests with testcontainers)
+- Docker Compose (if you want to run the MySQL database using the provided Docker Compose setup
 - A running instance of the MySQL database (configured in application.properties) for PROD.
