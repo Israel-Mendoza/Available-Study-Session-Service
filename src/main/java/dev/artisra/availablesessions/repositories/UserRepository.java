@@ -17,5 +17,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     boolean existsById(int id);
 
     // Deletes a user by its ID.
-    boolean deleteById(int id);
+    void deleteById(int id);
 }
