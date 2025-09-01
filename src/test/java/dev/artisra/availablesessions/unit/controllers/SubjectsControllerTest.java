@@ -3,7 +3,6 @@ package dev.artisra.availablesessions.unit.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.artisra.availablesessions.controllers.SubjectsController;
 import dev.artisra.availablesessions.exceptions.custom.SubjectNotFoundException;
-import dev.artisra.availablesessions.exceptions.custom.UserNotFoundException;
 import dev.artisra.availablesessions.models.req.SubjectRequest;
 import dev.artisra.availablesessions.models.res.SubjectResponse;
 import dev.artisra.availablesessions.services.interfaces.SubjectService;
@@ -14,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -36,7 +34,7 @@ public class SubjectsControllerTest {
     @MockitoBean
     private SubjectService subjectService;
 
-    // Test for POST /api/v1/users/{userId}/subjects
+    // Test for POST /users/{userId}/subjects
     @Test
     void createNewSubject_Success() throws Exception {
         // Arrange
@@ -55,7 +53,7 @@ public class SubjectsControllerTest {
                 .andExpect(content().string(String.valueOf(createdSubjectId)));
     }
 
-    // Test for POST /api/v1/subjects/{subjectId}/archive
+    // Test for POST /subjects/{subjectId}/archive
     @Test
     void archiveSubject_Success() throws Exception {
         // Arrange
@@ -70,7 +68,7 @@ public class SubjectsControllerTest {
                 .andExpect(jsonPath("$.archived").value(true));
     }
 
-    // Test for POST /api/v1/subjects/{subjectId}/archive - Subject Not Found
+    // Test for POST /subjects/{subjectId}/archive - Subject Not Found
     @Test
     void archiveSubject_SubjectNotFound() throws Exception {
         // Arrange
@@ -82,7 +80,7 @@ public class SubjectsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // Test for GET /api/v1/subjects/{subjectId}
+    // Test for GET /subjects/{subjectId}
     @Test
     void getSubjectById_Success() throws Exception {
         // Arrange
@@ -98,7 +96,7 @@ public class SubjectsControllerTest {
                 .andExpect(jsonPath("$.archived").value(false));
     }
 
-    // Test for GET /api/v1/users/{userId}/subjects - non-archived
+    // Test for GET /users/{userId}/subjects - non-archived
     @Test
     void getNonArchivedSubjectsForUser_Success() throws Exception {
         // Arrange
@@ -116,7 +114,7 @@ public class SubjectsControllerTest {
                 .andExpect(jsonPath("$[0].archived").value(false));
     }
 
-    // Test for GET /api/v1/users/{userId}/subjects - archived
+    // Test for GET /users/{userId}/subjects - archived
     @Test
     void getArchivedSubjectsForUser_Success() throws Exception {
         // Arrange
@@ -134,7 +132,7 @@ public class SubjectsControllerTest {
                 .andExpect(jsonPath("$[0].archived").value(true));
     }
 
-    // Test for PATCH /api/v1/subjects/{subjectId}
+    // Test for PATCH /subjects/{subjectId}
     @Test
     void updateSubject_Success() throws Exception {
         // Arrange
